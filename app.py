@@ -5,13 +5,14 @@ import streamlit as st
 # ==========================================================
 
 from src.data_processing.loader import (
-    load_dataset,
-    get_dataset_info,
+    load_dataset
 )
 
 from src.data_processing.validator import (
     validate_dataset,
 )
+
+from src.data_processing.profiler import profile_dataset
 
 # ==========================================================
 # Page Header
@@ -68,17 +69,19 @@ if uploaded_file is not None:
     # Step 3: Dataset Information
     # ------------------------------------------------------
 
-    info = get_dataset_info(df)
+    profile = profile_dataset(df)
+
+    profile = profile_dataset(df)
 
     st.subheader("📋 Dataset Information")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.metric("Rows", info["shape"][0])
+        st.metric("Rows", profile["shape"][0])
 
     with col2:
-        st.metric("Columns", info["shape"][1])
+        st.metric("Columns", profile["shape"][1])
 
     # ------------------------------------------------------
     # Step 4: Schema
@@ -87,7 +90,7 @@ if uploaded_file is not None:
     st.subheader("📑 Schema")
 
     st.dataframe(
-        info["schema"],
+        profile["schema"],
         use_container_width=True,
     )
 
