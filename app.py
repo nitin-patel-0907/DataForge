@@ -71,8 +71,6 @@ if uploaded_file is not None:
 
     profile = profile_dataset(df)
 
-    profile = profile_dataset(df)
-
     st.subheader("📋 Dataset Information")
 
     col1, col2 = st.columns(2)
