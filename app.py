@@ -71,15 +71,27 @@ if uploaded_file is not None:
 
     profile = profile_dataset(df)
 
-    st.subheader("📋 Dataset Information")
+    # ------------------------------------------------------
+    # Step 3: Dataset Summary
+    # ------------------------------------------------------
 
-    col1, col2 = st.columns(2)
+    st.subheader("📋 Dataset Summary")
+
+    summary = profile["summary"]
+
+    col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.metric("Rows", profile["shape"][0])
+        st.metric("Rows", summary["rows"])
+        st.metric("Numeric Columns", summary["numeric_columns"])
 
     with col2:
-        st.metric("Columns", profile["shape"][1])
+        st.metric("Columns", summary["columns"])
+        st.metric("Categorical Columns", summary["categorical_columns"])
+
+    with col3:
+        st.metric("Missing Values", summary["missing_values"])
+        st.metric("Memory Usage (MB)", summary["memory_usage"])
 
     # ------------------------------------------------------
     # Step 4: Schema
