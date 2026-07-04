@@ -14,6 +14,8 @@ from src.data_processing.validator import (
 
 from src.data_processing.profiler import profile_dataset
 
+from src.data_processing.quality import assess_data_quality
+
 # ==========================================================
 # Page Header
 # ==========================================================
@@ -92,6 +94,18 @@ if uploaded_file is not None:
     with col3:
         st.metric("Missing Values", summary["missing_values"])
         st.metric("Memory Usage (MB)", summary["memory_usage"])
+
+    # ------------------------------------------------------
+    # Step 5: Quality report
+    # ------------------------------------------------------
+
+    quality_report = assess_data_quality(df)
+
+    st.subheader("🛡️ Data Quality Report")
+
+    for issue in quality_report["issues"]:
+        if issue["severity"] == "warning":
+            st.warning(issue["message"])
 
     # ------------------------------------------------------
     # Step 4: Schema
