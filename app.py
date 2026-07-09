@@ -4,16 +4,9 @@ import streamlit as st
 # Import reusable business logic
 # ==========================================================
 
-from src.data_processing.loader import (
-    load_dataset
-)
-
-from src.data_processing.validator import (
-    validate_dataset,
-)
-
+from src.data_processing.loader import load_dataset
+from src.data_processing.validator import validate_dataset
 from src.data_processing.profiler import profile_dataset
-
 from src.data_processing.quality import assess_data_quality
 
 # ==========================================================
@@ -58,23 +51,27 @@ if uploaded_file is not None:
 
     validation_result = validate_dataset(df)
 
-    # Fatal validation errors
     if not validation_result["valid"]:
         st.error(validation_result["message"])
         st.stop()
 
-    # Non-fatal validation warnings
     for warning in validation_result["warnings"]:
         st.warning(warning)
 
     # ------------------------------------------------------
-    # Step 3: Dataset Information
+    # Step 3: Profile Dataset
     # ------------------------------------------------------
 
     profile = profile_dataset(df)
 
     # ------------------------------------------------------
-    # Step 3: Dataset Summary
+    # Step 4: Assess Data Quality
+    # ------------------------------------------------------
+
+    quality_report = assess_data_quality(df)
+
+    # ------------------------------------------------------
+    # Step 5: Dataset Summary
     # ------------------------------------------------------
 
     st.subheader("📋 Dataset Summary")
@@ -96,35 +93,68 @@ if uploaded_file is not None:
         st.metric("Memory Usage (MB)", summary["memory_usage"])
 
     # ------------------------------------------------------
-    # Step 5: Quality report
+    # Step 6: Data Quality
     # ------------------------------------------------------
 
-    quality_report = assess_data_quality(df)
+    st.subheader("🛡 Data Quality")
 
-    st.subheader("🛡️ Data Quality Report")
+    col1, col2 = st.columns(2)
 
-    for issue in quality_report["issues"]:
-        if issue["severity"] == "warning":
-            st.warning(issue["message"])
+    with col1:
+        st.metric(
+            "Quality Score",
+            f"{quality_report['score']} / 100"
+        )
+
+    with col2:
+
+        grade = quality_report["grade"]
+
+        if grade == "Excellent":
+            st.success("🟢 Excellent")
+
+        elif grade == "Good":
+            st.info("🔵 Good")
+
+        elif grade == "Fair":
+            st.warning("🟡 Fair")
+
+        else:
+            st.error("🔴 Poor")
+
+    if quality_report["issues"]:
+
+        st.subheader("⚠ Quality Issues")
+
+        for issue in quality_report["issues"]:
+
+            if issue["severity"] == "warning":
+                st.warning(issue["message"])
+
+            else:
+                st.error(issue["message"])
+
+    else:
+        st.success("✅ No data quality issues detected.")
 
     # ------------------------------------------------------
-    # Step 4: Schema
+    # Step 7: Schema
     # ------------------------------------------------------
 
     st.subheader("📑 Schema")
 
     st.dataframe(
         profile["schema"],
-        use_container_width=True,
+        use_container_width=True
     )
 
     # ------------------------------------------------------
-    # Step 5: Preview
+    # Step 8: Preview
     # ------------------------------------------------------
 
-    st.subheader("👀 Preview")
+    st.subheader("👀 Dataset Preview")
 
     st.dataframe(
         df.head(),
-        use_container_width=True,
+        use_container_width=True
     )

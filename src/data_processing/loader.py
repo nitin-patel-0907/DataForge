@@ -10,3 +10,4 @@ def load_dataset(file):
 
     except EmptyDataError:
         raise ValueError("The uploaded file is empty.")
+    
