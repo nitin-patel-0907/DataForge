@@ -8,6 +8,7 @@ from src.data_processing.loader import load_dataset
 from src.data_processing.validator import validate_dataset
 from src.data_processing.profiler import profile_dataset
 from src.data_processing.quality import assess_data_quality
+from src.visualization.charts import (create_histogram,)
 
 # ==========================================================
 # Page Header
@@ -136,6 +137,37 @@ if uploaded_file is not None:
 
     else:
         st.success("✅ No data quality issues detected.")
+
+    # ------------------------------------------------------
+    # Step 7: Charts
+    # ------------------------------------------------------
+
+    st.subheader("📊 Histogram")
+
+    numeric_columns = (
+        df.select_dtypes(include="number")
+        .columns
+    )
+
+    if len(numeric_columns) == 0:
+
+        st.info(
+            "No numeric columns available for visualization."
+        )
+
+    else:
+
+        selected_column = st.selectbox(
+            "Select a numeric column",
+            numeric_columns
+        )
+
+    figure = create_histogram(
+        df,
+        selected_column
+    )
+
+    st.pyplot(figure)
 
     # ------------------------------------------------------
     # Step 7: Schema
