@@ -8,7 +8,7 @@ from src.data_processing.loader import load_dataset
 from src.data_processing.validator import validate_dataset
 from src.data_processing.profiler import profile_dataset
 from src.data_processing.quality import assess_data_quality
-from src.visualization.charts import (create_histogram,)
+from src.visualization.charts import (create_histogram, create_boxplot)
 
 # ==========================================================
 # Page Header
@@ -162,12 +162,19 @@ if uploaded_file is not None:
             numeric_columns
         )
 
-    figure = create_histogram(
-        df,
-        selected_column
-    )
+        histogram = create_histogram(
+            df,
+            selected_column
+        )
 
-    st.pyplot(figure)
+        boxplot = create_boxplot(
+            df,
+            selected_column
+        )
+
+        st.pyplot(histogram)
+
+        st.pyplot(boxplot)
 
     # ------------------------------------------------------
     # Step 7: Schema

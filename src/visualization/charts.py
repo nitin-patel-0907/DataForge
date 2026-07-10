@@ -17,7 +17,22 @@ def create_histogram(df: pd.DataFrame, column: str):
     ax.set_xlabel(column)
 
     ax.set_ylabel("Frequency")
-    
+
+    fig.tight_layout()
+
+    return fig
+
+
+def create_boxplot(df: pd.DataFrame, column: str):
+    """Create a box plot for a numeric column."""
+    fig, ax = plt.subplots()
+
+    ax.boxplot(df[column])
+
+    ax.set_title(f"Box Plot of {column}")
+
+    ax.set_ylabel(column)
+
     fig.tight_layout()
 
     return fig
